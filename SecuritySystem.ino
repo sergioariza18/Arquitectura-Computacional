@@ -34,12 +34,13 @@ char pin[4] ="0123";
 char pinIngresado[4];
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
-int contador = 0;
-int numeroIntentos = 0;
 const int rs = 12, en = 11, d4 = 31, d5 = 32, d6 = 33, d7 = 34;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+int contador = 0;
+int numeroIntentos = 0;
 
-void setup() {
+void setup() 
+{
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
   lcd.print("Digite la clave:");
@@ -49,73 +50,86 @@ void setup() {
   pinMode(LED_GREEN,OUTPUT);
 }
 
-void loop() {
+void loop() 
+{
   char key = keypad.getKey();
   pinIngresado[contador] = key;
-  if (key){
+  if (key)
+  {
     lcd.setCursor(contador++, 1);
     lcd.println("*_               ");
   }
-  if(contador == 4){
-      contador = 0;
-      if(comprobarContra()==1){
-          //Prender led verde
-          LED_RGB(0,255,0);
-          mostrarEnDisplay("Clave correcta");
-          delay(2000);
-          LED_RGB(0,255,0);
-          delay(1000);
-          LED_RGB(0,0,255);
-          delay(500);
-          LED_RGB(255,0,0);
-          delay(500);
-          LED_RGB(0,255,0);
-          delay(500);
-          LED_RGB(0,0,255);
-          delay(500);
-          LED_RGB(255,0,0);
-          delay(500);
-          LED_RGB(0,0,0);
-          mostrarEnDisplay("                ");
-          }else{
-            //Prender led azul
-            LED_RGB(0,0,255);
-            mostrarEnDisplay("Clave incorrecta");
-          delay(3000);  
-          mostrarEnDisplay("                ");
-          LED_RGB(0,0,0);
-            numeroIntentos++;
-          }
-    }
-    if(numeroIntentos == 3){
-      //Activar led rojo y esperar 10 seg
-      //Despues reiniciar
+  if(contador == 4)
+  {
+    contador = 0;
+    if(comprobarPin()==1)
+    {
+      //Si es correcto el pin, led verde
+      LED_RGB(0,255,0);
+      mostrarEnDisplay("Clave correcta");
+      delay(2000);
+      LED_RGB(0,255,0);
+      delay(700);
+      LED_RGB(0,0,255);
+      delay(500);
+      LED_RGB(255,0,0);
+      delay(500);
+      LED_RGB(0,255,0);
+      delay(500);
+      LED_RGB(0,0,255);
+      delay(500);
+      LED_RGB(255,0,0);
+      delay(500);
+      LED_RGB(0,0,0);
+      mostrarEnDisplay("                ");
+   }
+   else
+   {
+    //Si es incorrecto el pin, led azúl
+    LED_RGB(0,0,255);
+    mostrarEnDisplay("Clave incorrecta");
+    delay(3000);  
+    mostrarEnDisplay("                ");
+    LED_RGB(0,0,0);
+    numeroIntentos++;
+   }
+ }
+  if(numeroIntentos == 3)
+  {
+      //Bloquar sistema por 5s
       LED_RGB(255,0,0);
       mostrarEnDisplay("SISTEMA BLOQUEADO");
-      delay(5000);//se bloquea por 5 segundos
-      numeroIntentos=0;
+      delay(5000);
+      numeroIntentos = 0;
       mostrarEnDisplay("                ");
       LED_RGB(0,0,0);
-    }
+  }
 }
-void mostrarEnDisplay(String texto){
+
+void mostrarEnDisplay(String texto)
+{
   lcd.setCursor(0, 1);
   lcd.print(texto);
 }
 
-int comprobarContra(){
-  int contaOk = 0;
-  for(int i=0; i < 4; i++)
-    if(pinIngresado[i]==pin[i])    
-        contaOk++;
-   
-  if(contaOk == 4)
+int comprobarPin()
+{
+  int cont = 0;
+  for(int i = 0; i < 4; i++)
+  {
+     if(pinIngresado[i] == pin[i])    
+        cont++;
+  }
+  if(cont == 4)
+  {
     return 1;
+  }
    return 0;
-    
 }
-void LED_RGB(int r,int g,int b){
-  analogWrite(LED_RED,r);
-  analogWrite(LED_GREEN,g);
-  analogWrite(LED_BLUE,b);
+
+void LED_RGB(int R,int G,int B)
+{
+  analogWrite(LED_RED, R);
+  analogWrite(LED_GREEN, G);
+  analogWrite(LED_BLUE, B);
 }
